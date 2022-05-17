@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UserServices.Models
+﻿namespace UserServices.Models
 {
-    public partial class Profile
+    public class ProfileData
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int UserId { get; set; }
         public string Name { get; set; } = null!;
         public string City { get; set; } = null!;
         public string Address { get; set; } = null!;
         public string Phone { get; set; } = null!;
-
-        public virtual User User { get; set; }
     }
 }
