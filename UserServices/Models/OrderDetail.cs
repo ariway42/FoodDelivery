@@ -11,6 +11,7 @@ namespace UserServices.Models
         public int Qty { get; set; }
         public string Location { get; set; } = null!;
         public string Tracker { get; set; } = null!;
+        public bool Status { get; set; }
 
         public virtual Food Food { get; set; } = null!;
         public virtual Order Order { get; set; } = null!;

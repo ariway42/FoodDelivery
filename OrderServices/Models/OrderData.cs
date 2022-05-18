@@ -11,7 +11,7 @@ namespace OrderServices.Models
         public string? Code { get; set; }
         public int? IdUser { get; set; }
 
-        public List<OrderDetailData> Details { get; set; }
+        public List<OrderDetailsData> Details { get; set; }
 
     }
 }

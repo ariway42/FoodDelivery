@@ -14,7 +14,7 @@ namespace UserServices.GraphQL
     public class Query
     {
         [Authorize] // dapat diakses kalau sudah login
-        public IQueryable<User> GetUsers([Service] FoodDeliveryContext context, ClaimsPrincipal claimsPrincipal)
+        public IQueryable<User> GetUsers([Service] FoodDeliveriesContext context, ClaimsPrincipal claimsPrincipal)
         {
             var userName = claimsPrincipal.Identity.Name;
 
@@ -35,8 +35,31 @@ namespace UserServices.GraphQL
             return new List<User>().AsQueryable();
         }
 
+        [Authorize] // dapat diakses kalau sudah login
+        public IQueryable<User> GetCourier([Service] FoodDeliveriesContext context, ClaimsPrincipal claimsPrincipal)
+        {
+            var userName = claimsPrincipal.Identity.Name;
+
+            // check admin role ?
+            var adminRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "MANAGER").FirstOrDefault();
+            var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
+            var role = context.UserRoles.Where(o => o.RoleId == 4).FirstOrDefault();
+            if (role != null)
+            {
+                if (adminRole != null)
+                {
+                    var orders = context.Users.Where(o => o.Id == role.RoleId);
+                    return orders.AsQueryable();
+                }
+   
+            }
+
+
+            return new List<User>().AsQueryable();
+        }
+
         [Authorize] 
-        public IQueryable<Profile> GetProfiles([Service] FoodDeliveryContext context, ClaimsPrincipal claimsPrincipal)
+        public IQueryable<Profile> GetProfiles([Service] FoodDeliveriesContext context, ClaimsPrincipal claimsPrincipal)
         {
             var userName = claimsPrincipal.Identity.Name;
 

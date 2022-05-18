@@ -2,10 +2,10 @@
 {
     public record OrderDetailInput
     (
-        int? Id,
-        int OrderId,
-        int FoodId,
-        int Qty
+        int Id,
+        int Qty,
+        string Location,
+        string Tracker
 
 
     );

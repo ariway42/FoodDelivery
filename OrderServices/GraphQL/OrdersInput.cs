@@ -10,7 +10,7 @@ namespace OrderServices.GraphQL
         int? Id,
         string Code,
          int IdUser,
-         List<OrderDetailData> OrderDetailDatas
+         List<OrderDetailsData> OrdersDetailsData
       
     ); 
     

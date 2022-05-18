@@ -16,7 +16,7 @@ namespace UserServices.GraphQL
     {
         public async Task<UserData> RegisterUserAsync(
             RegisterUser input,
-            [Service] FoodDeliveryContext context)
+            [Service] FoodDeliveriesContext context)
         {
             var user = context.Users.Where(o => o.Username == input.UserName).FirstOrDefault();
             if (user != null)
@@ -46,7 +46,7 @@ namespace UserServices.GraphQL
         public async Task<UserToken> LoginAsync(
             LoginUser input,
             [Service] IOptions<TokenSettings> tokenSettings, // setting token
-            [Service] FoodDeliveryContext context) // EF
+            [Service] FoodDeliveriesContext context) // EF
         {
             var user = context.Users.Where(o => o.Username == input.Username).FirstOrDefault();
             if (user == null)
@@ -94,7 +94,7 @@ namespace UserServices.GraphQL
         [Authorize(Roles = new[] { "ADMIN" })]
         public async Task<User> UpdateUserAsync(
            UserInput input,
-           [Service] FoodDeliveryContext context)
+           [Service] FoodDeliveriesContext context)
         {
             var user = context.Users.Where(o => o.Id == input.Id).FirstOrDefault();
             if (user != null)
@@ -113,7 +113,7 @@ namespace UserServices.GraphQL
         [Authorize(Roles = new[] { "ADMIN" })]
         public async Task<User> DeleteUserByIdAsync(
           int id,
-          [Service] FoodDeliveryContext context)
+          [Service] FoodDeliveriesContext context)
         {
             var product = context.Users.Where(o => o.Id == id).FirstOrDefault();
             if (product != null)
@@ -129,7 +129,7 @@ namespace UserServices.GraphQL
         [Authorize(Roles = new[] { "ADMIN" })]
         public async Task<User> AddUserAsync(
            UserCreate input,
-           [Service] FoodDeliveryContext context)
+           [Service] FoodDeliveriesContext context)
         {
 
             // EF
@@ -147,11 +147,12 @@ namespace UserServices.GraphQL
             return ret.Entity;
         }
 
+
         [Authorize]
         public async Task<Profile> AddProfileAsync(
             ProfileInput input,
             ClaimsPrincipal claimsPrincipal,
-            [Service] FoodDeliveryContext context)
+            [Service] FoodDeliveriesContext context)
         {
            
             var userName = claimsPrincipal.Identity.Name;
@@ -182,7 +183,7 @@ namespace UserServices.GraphQL
         [Authorize]
         public async Task<User> UpdatePassAsync(
           PassInput input, ClaimsPrincipal claimsPrincipal,
-          [Service] FoodDeliveryContext context)
+          [Service] FoodDeliveriesContext context)
         {
             var userName = claimsPrincipal.Identity.Name;
 
@@ -198,6 +199,64 @@ namespace UserServices.GraphQL
 
             return await Task.FromResult(user);
         }
+
+
+        [Authorize(Roles = new[] { "MANAGER" })]
+        public async Task<User> AddCourierAsync(
+        UserCreate input,
+        [Service] FoodDeliveriesContext context)
+        {
+
+            // EF
+            var user = new User
+            {
+                Email = input.Email,
+                Fullname = input.FullName,
+                Username = input.UserName,
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
+            };
+
+            var ret = context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            return ret.Entity;
+        }
+
+        [Authorize(Roles = new[] { "MANAGER" })]
+        public async Task<User> UpdateCourierAsync(
+         UserInput input,
+         [Service] FoodDeliveriesContext context)
+        {
+            var user = context.Users.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (user != null)
+            {
+                user.Fullname = input.FullName;
+                user.Email = input.Email;
+
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
+            }
+
+
+            return await Task.FromResult(user);
+        }
+
+        [Authorize(Roles = new[] { "MANAGER" })]
+        public async Task<User> DeleteCourierByIdAsync(
+          int id,
+          [Service] FoodDeliveriesContext context)
+        {
+            var product = context.Users.Where(o => o.Id == id).FirstOrDefault();
+            if (product != null)
+            {
+                context.Users.Remove(product);
+                await context.SaveChangesAsync();
+            }
+
+
+            return await Task.FromResult(product);
+        }
+
 
     }
 }

@@ -15,7 +15,7 @@ namespace FoodServices.GraphQL
     {
 
         [Authorize]
-        public IQueryable<Food> GetFoods([Service] FoodDeliveryContext context, ClaimsPrincipal claimsPrincipal)
+        public IQueryable<Food> GetFoods([Service] FoodDeliveriesContext context, ClaimsPrincipal claimsPrincipal)
         {
             var userName = claimsPrincipal.Identity.Name;
 

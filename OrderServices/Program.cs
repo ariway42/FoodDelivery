@@ -9,7 +9,7 @@ using OrderServices.GraphQL;
 var builder = WebApplication.CreateBuilder(args);
 
 var conString = builder.Configuration.GetConnectionString("MyDatabase");
-builder.Services.AddDbContext<FoodDeliveryContext>(options =>
+builder.Services.AddDbContext<FoodDeliveriesContext>(options =>
      options.UseSqlServer(conString)
 );
 

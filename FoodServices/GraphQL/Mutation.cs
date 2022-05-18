@@ -17,7 +17,7 @@ namespace FoodServices.GraphQL
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Food> AddFoodsAsync(
             FoodInput input,
-            [Service] FoodDeliveryContext context)
+            [Service] FoodDeliveriesContext context)
         {
             var food = new Food
             {
@@ -37,7 +37,7 @@ namespace FoodServices.GraphQL
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Food> UpdateFoodAsync(
           FoodInput input,
-          [Service] FoodDeliveryContext context)
+          [Service] FoodDeliveriesContext context)
         {
             var food = context.Foods.Where(o => o.Id == input.Id).FirstOrDefault();
             if (food != null)
@@ -56,7 +56,7 @@ namespace FoodServices.GraphQL
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Food> DeleteFoodByIdAsync(
                    int id,
-                   [Service] FoodDeliveryContext context)
+                   [Service] FoodDeliveriesContext context)
         {
             var food = context.Foods.Where(o => o.Id == id).FirstOrDefault();
             if (food != null)
