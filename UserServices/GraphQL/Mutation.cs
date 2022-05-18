@@ -138,7 +138,7 @@ namespace UserServices.GraphQL
                 Email = input.Email,
                 Fullname = input.FullName,
                 Username = input.UserName,
-                Password = input.Password
+                Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
             };
 
             var ret = context.Users.Add(user);

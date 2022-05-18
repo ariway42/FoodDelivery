@@ -3143,11 +3143,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\net microservices\\FoodDelivery\\OrderServices\\OrderServices.csproj",
+      "projectUniqueName": "E:\\Studycase\\nw\\FoodDelivery\\OrderServices\\OrderServices.csproj",
       "projectName": "OrderServices",
-      "projectPath": "E:\\net microservices\\FoodDelivery\\OrderServices\\OrderServices.csproj",
+      "projectPath": "E:\\Studycase\\nw\\FoodDelivery\\OrderServices\\OrderServices.csproj",
       "packagesPath": "C:\\Users\\Khairul Anwar\\.nuget\\packages\\",
-      "outputPath": "E:\\net microservices\\FoodDelivery\\OrderServices\\obj\\",
+      "outputPath": "E:\\Studycase\\nw\\FoodDelivery\\OrderServices\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Khairul Anwar\\AppData\\Roaming\\NuGet\\NuGet.Config",
