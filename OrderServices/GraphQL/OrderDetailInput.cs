@@ -3,7 +3,7 @@
     public record OrderDetailInput
     (
         int Id,
-        int Qty,
+        int? Qty,
         string Location,
         string Tracker
 

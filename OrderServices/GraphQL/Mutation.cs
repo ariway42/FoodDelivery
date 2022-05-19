@@ -55,27 +55,29 @@ namespace OrderServices.GraphQL
 
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<OrderDetail> UpdateOrderAsync(
-        OrderDetailInput input,
+        OrdersUpdate input,
         [Service] FoodDeliveriesContext context)
         {
-            
-            var orderfoo = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
-                if (orderfoo != null)
-                {
-       
-        
-                orderfoo.Qty = input.Qty;
-                orderfoo.Location = input.Location;
-                orderfoo.Tracker = input.Tracker;
-              
-                context.OrderDetails.Update(orderfoo);
+            var orderDetail = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (orderDetail != null)
+            {
+
+                orderDetail.FoodId = input.FoodId;
+                orderDetail.Qty = input.Qty;
+                orderDetail.OrderId = input.OrderId;
+                orderDetail.Location= input.Location;
+                orderDetail.Tracker = input.Tracker;
+
+                context.OrderDetails.Update(orderDetail);
                 await context.SaveChangesAsync();
-             
             }
 
+            return await Task.FromResult(orderDetail);
 
-            return await Task.FromResult(orderfoo);
         }
+
+    
+
 
         [Authorize(Roles = new[] { "MANAGER" })]
         public async Task<Order> DeleteOrderByIdAsync(
@@ -96,8 +98,30 @@ namespace OrderServices.GraphQL
 
             return await Task.FromResult(order);
         }
-    }
+
+        [Authorize(Roles = new[] { "COURIER" })]
+        public async Task<OrderDetail> UpdateTrackerAsync(
+        UpdateTracker input,
+        [Service] FoodDeliveriesContext context)
+        {
+            var orderDetail = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
+            if (orderDetail != null)
+            {
+
+                orderDetail.Location = input.Location;
+                orderDetail.Tracker = input.Tracker;
+                orderDetail.Status = input.Status;
+                context.OrderDetails.Update(orderDetail);
+                await context.SaveChangesAsync();
+            }
+
+            return await Task.FromResult(orderDetail);
+
+        }
+
 
     }
+
+}
 
     

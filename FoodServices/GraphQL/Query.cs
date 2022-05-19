@@ -21,10 +21,12 @@ namespace FoodServices.GraphQL
 
             // check manager role ?
             var managerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "MANAGER").FirstOrDefault();
+            var buyerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "BUYER").FirstOrDefault();
+
             var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
             if (user != null)
             {
-                if (managerRole != null)
+                if (managerRole != null || buyerRole != null)
 
                     return context.Foods;
             }
