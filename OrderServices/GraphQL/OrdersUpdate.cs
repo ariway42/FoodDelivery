@@ -4,12 +4,12 @@ namespace OrderServices.GraphQL
 {
     public record OrdersUpdate
     (
-         int? Id,
-         int OrderId,
+         int Id,
+         
         int Qty,
-        int FoodId,
-        string? Location,
-        string? Tracker
+       
+        string Location,
+        string Tracker
 
     );
 }

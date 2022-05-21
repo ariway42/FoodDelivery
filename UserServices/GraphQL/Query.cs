@@ -25,7 +25,7 @@ namespace UserServices.GraphQL
             {
                 if (adminRole != null)
                 {
-                    return context.Users;
+                    return context.Users.Include(o => o.Profiles); 
                 }
                 var users = context.Users.Where(o => o.Id == user.Id);
                 return users.AsQueryable();
@@ -44,12 +44,12 @@ namespace UserServices.GraphQL
             var adminRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "MANAGER").FirstOrDefault();
             var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
             var role = context.UserRoles.Where(o => o.RoleId == 4).FirstOrDefault();
+            var roleId = context.Roles.Where(x => x.Name.Equals("COURIER")).Select(y => y.Id).FirstOrDefault();
             if (role != null)
             {
                 if (adminRole != null)
                 {
-                    var orders = context.Users.Where(o => o.Id == role.RoleId);
-                    return orders.AsQueryable();
+                    return context.Users.Where(x => x.UserRoles.Any(y => y.RoleId.Equals(roleId)));
                 }
    
             }

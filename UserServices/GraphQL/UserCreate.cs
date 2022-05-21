@@ -1,11 +1,15 @@
-﻿namespace UserServices.GraphQL
+﻿using UserServices.Models;
+
+namespace UserServices.GraphQL
 {
     public record UserCreate
     (
    
-  string FullName,
- string Email,
- string UserName,
- string Password
+         int? Id,
+        string FullName,
+         string Email,
+          string UserName,
+           string Password,
+         List<UserRoleData> UserRoleDatas
     );
 }

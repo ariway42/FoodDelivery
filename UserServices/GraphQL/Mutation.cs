@@ -115,15 +115,27 @@ namespace UserServices.GraphQL
           int id,
           [Service] FoodDeliveriesContext context)
         {
-            var product = context.Users.Where(o => o.Id == id).FirstOrDefault();
-            if (product != null)
+            var dprofile = context.Profiles.Where(o => o.Id == id).FirstOrDefault();
+            var dcourier = context.Users.Where(o => o.Id == id).FirstOrDefault();
+            var drole = context.UserRoles.Where(o => o.Id == id).FirstOrDefault();
+            if (drole != null)
             {
-                context.Users.Remove(product);
+                context.UserRoles.Remove(drole);
+                await context.SaveChangesAsync();
+            }
+            if (dprofile != null)
+            {
+                context.Profiles.Remove(dprofile);
+                await context.SaveChangesAsync();
+            }
+            if (drole != null)
+            {
+                context.Users.Remove(dcourier);
                 await context.SaveChangesAsync();
             }
 
 
-            return await Task.FromResult(product);
+            return await Task.FromResult(dcourier);
         }
 
         [Authorize(Roles = new[] { "ADMIN" })]
@@ -141,12 +153,22 @@ namespace UserServices.GraphQL
                 Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
             };
 
+            for (int i = 0; i < input.UserRoleDatas.Count; i++)
+            {
+                var userrolec = new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = 3
+                   
+                };
+                user.UserRoles.Add(userrolec);
+            }
+
             var ret = context.Users.Add(user);
             await context.SaveChangesAsync();
 
             return ret.Entity;
         }
-
 
         [Authorize]
         public async Task<Profile> AddProfileAsync(
@@ -154,26 +176,35 @@ namespace UserServices.GraphQL
             ClaimsPrincipal claimsPrincipal,
             [Service] FoodDeliveriesContext context)
         {
-           
+
             var userName = claimsPrincipal.Identity.Name;
 
-                var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
-                if (user != null)
+            var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
+
+            var profil = context.Profiles.Where(o => o.UserId == input.UserId).FirstOrDefault();
+
+            if (user != null)
+                {
+
+                if (profil == null)
                 {
                     // EF
                     var profile = new Profile
                     {
-                       Name = input.Name,
-                       Address = input.Address,
+                        Name = input.Name,
+                        Address = input.Address,
                         Phone = input.Phone,
-                         City = input.City,
-                       UserId = user.Id
+                        City = input.City,
+                        UserId = user.Id
                     };
 
-                var ret = context.Profiles.Add(profile);
-                await context.SaveChangesAsync();
+                    var ret = context.Profiles.Add(profile);
+                    await context.SaveChangesAsync();
 
-                return ret.Entity;
+                    return ret.Entity;
+                }
+                else
+                    throw new Exception("Profile Already include");
 
             }
                 else
@@ -216,6 +247,17 @@ namespace UserServices.GraphQL
                 Password = BCrypt.Net.BCrypt.HashPassword(input.Password) // encrypt password
             };
 
+            for (int i = 0; i < input.UserRoleDatas.Count; i++)
+            {
+                var userrolec = new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = 4
+
+                };
+                user.UserRoles.Add(userrolec);
+            }
+
             var ret = context.Users.Add(user);
             await context.SaveChangesAsync();
 
@@ -246,15 +288,27 @@ namespace UserServices.GraphQL
           int id,
           [Service] FoodDeliveriesContext context)
         {
-            var product = context.Users.Where(o => o.Id == id).FirstOrDefault();
-            if (product != null)
+            var dprofile = context.Profiles.Where(o => o.Id == id).FirstOrDefault();
+            var dcourier = context.Users.Where(o => o.Id == id).FirstOrDefault();
+            var drole = context.UserRoles.Where(o => o.Id == id).FirstOrDefault();
+            if (drole!= null)
             {
-                context.Users.Remove(product);
+                context.UserRoles.Remove(drole);
+                await context.SaveChangesAsync();
+            }
+            if (dprofile != null)
+            {
+                context.Profiles.Remove(dprofile);
+                await context.SaveChangesAsync();
+            }
+            if (drole != null)
+            {
+                context.Users.Remove(dcourier);
                 await context.SaveChangesAsync();
             }
 
 
-            return await Task.FromResult(product);
+            return await Task.FromResult(dcourier);
         }
 
 

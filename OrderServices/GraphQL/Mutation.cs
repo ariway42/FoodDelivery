@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using OrderServices.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace OrderServices.GraphQL
 {
@@ -19,17 +20,18 @@ namespace OrderServices.GraphQL
             OrdersInput input, ClaimsPrincipal claimsPrincipal,
             [Service] FoodDeliveriesContext context)
         {
+           
             var userName = claimsPrincipal.Identity.Name;
             //var buyerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "BUYER").FirstOrDefault();
 
             var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
-
-            if (user == null) return new Order();
+          
 
             var order = new Order
             {
                 IdUser = user.Id,
                 Code = input.Code
+
 
             };
 
@@ -42,7 +44,8 @@ namespace OrderServices.GraphQL
                     Tracker = input.OrdersDetailsData[i].Tracker,
                     OrderId = order.Id,
                     FoodId = input.OrdersDetailsData[i].FoodId,
-                    Qty = input.OrdersDetailsData[i].Qty
+                    Qty = input.OrdersDetailsData[i].Qty,
+                    CourierId = input.OrdersDetailsData[i].CourierId
                 };
                 order.OrderDetails.Add(orderdetails);
             }
@@ -52,30 +55,32 @@ namespace OrderServices.GraphQL
 
             return ret.Entity;
         }
+            
+      
 
-        [Authorize(Roles = new[] { "MANAGER" })]
-        public async Task<OrderDetail> UpdateOrderAsync(
-        OrdersUpdate input,
-        [Service] FoodDeliveriesContext context)
-        {
-            var orderDetail = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
-            if (orderDetail != null)
+[Authorize(Roles = new[] { "MANAGER" })]
+            public async Task<OrderDetail> UpdateOrderAsync(
+            OrdersUpdate input,
+            [Service] FoodDeliveriesContext context)
             {
+                var orderDetail = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
+                if (orderDetail != null)
+                {
 
-                orderDetail.FoodId = input.FoodId;
-                orderDetail.Qty = input.Qty;
-                orderDetail.OrderId = input.OrderId;
-                orderDetail.Location= input.Location;
-                orderDetail.Tracker = input.Tracker;
 
-                context.OrderDetails.Update(orderDetail);
-                await context.SaveChangesAsync();
+                    orderDetail.Qty = input.Qty;
+
+                    orderDetail.Location = input.Location;
+                    orderDetail.Tracker = input.Tracker;
+
+                    context.OrderDetails.Update(orderDetail);
+                    await context.SaveChangesAsync();
+                }
+
+                return await Task.FromResult(orderDetail);
+
             }
-
-            return await Task.FromResult(orderDetail);
-
-        }
-
+        
     
 
 
@@ -108,9 +113,9 @@ namespace OrderServices.GraphQL
             if (orderDetail != null)
             {
 
-                orderDetail.Location = input.Location;
+           
                 orderDetail.Tracker = input.Tracker;
-                orderDetail.Status = input.Status;
+              orderDetail.Status = input.Status;
                 context.OrderDetails.Update(orderDetail);
                 await context.SaveChangesAsync();
             }

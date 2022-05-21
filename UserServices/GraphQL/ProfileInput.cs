@@ -3,7 +3,7 @@
     public record ProfileInput
     (
 
-  int? UserId,
+  int UserId,
   string Name,
    string City,
    string Address,

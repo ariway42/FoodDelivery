@@ -12,7 +12,9 @@ namespace OrderServices.Models
         public string Location { get; set; } = null!;
         public string Tracker { get; set; } = null!;
         public bool Status { get; set; }
+        public int CourierId { get; set; }
 
+        public virtual User Courier { get; set; } = null!;
         public virtual Food Food { get; set; } = null!;
         public virtual Order Order { get; set; } = null!;
     }

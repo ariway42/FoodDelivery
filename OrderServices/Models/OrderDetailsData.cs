@@ -12,6 +12,7 @@ namespace OrderServices.Models
         public int FoodId { get; set; }
         public int Qty { get; set; }
         public string Location { get; set; }
-        public string Tracker { get; set; } 
+        public string Tracker { get; set; }
+        public int CourierId { get; set; }
     }
 }

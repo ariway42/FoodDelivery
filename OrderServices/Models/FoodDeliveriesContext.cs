@@ -76,6 +76,12 @@ namespace OrderServices.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.HasOne(d => d.Courier)
+                    .WithMany(p => p.OrderDetails)
+                    .HasForeignKey(d => d.CourierId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderDetail_User");
+
                 entity.HasOne(d => d.Food)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.FoodId)

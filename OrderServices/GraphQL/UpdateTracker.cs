@@ -6,7 +6,6 @@ namespace OrderServices.GraphQL
     (
          int? Id,
        bool Status,
-        string? Location,
         string? Tracker
 
     );

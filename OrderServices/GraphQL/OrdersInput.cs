@@ -10,6 +10,8 @@ namespace OrderServices.GraphQL
         int? Id,
         string Code,
          int IdUser,
+         int CourierId,
+         bool? Status,
          List<OrderDetailsData> OrdersDetailsData
       
     ); 
