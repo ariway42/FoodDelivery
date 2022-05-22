@@ -16,52 +16,123 @@ namespace OrderServices.GraphQL
     public class Mutation
     {
         [Authorize(Roles = new[] { "BUYER" })]
-        public async Task<Order> AddOrderAsync(
+        public async Task<OrderData> AddOrderAsync(
             OrdersInput input, ClaimsPrincipal claimsPrincipal,
             [Service] FoodDeliveriesContext context)
         {
-           
+
             var userName = claimsPrincipal.Identity.Name;
-            //var buyerRole = claimsPrincipal.Claims.Where(o => o.Type == ClaimTypes.Role && o.Value == "BUYER").FirstOrDefault();
 
             var user = context.Users.Where(o => o.Username == userName).FirstOrDefault();
-          
 
-            var order = new Order
+            using var transaction = context.Database.BeginTransaction();
+
+            var max = context.Orders.Max(p => p.Id);
+            var sttc = context.OrderDetails.Where(o => o.OrderId == max).FirstOrDefault();
+
+            // var mx = context.OrderDetails.OrderByDescending(p => p.ID).FirstOrDefault().ID;
+
+
+            foreach (var item in input.OrdersDetailsData)
             {
-                IdUser = user.Id,
-                Code = input.Code
+
+                // search for existing entity.
+                var enti = context.OrderDetails.Where(x => x.CourierId == item.CourierId).FirstOrDefault();
 
 
-            };
 
-
-            for (int i = 0; i < input.OrdersDetailsData.Count; i++)
-            {
-                var orderdetails = new OrderDetail
+                if (enti == null)
                 {
-                    Location = input.OrdersDetailsData[i].Location,
-                    Tracker = input.OrdersDetailsData[i].Tracker,
-                    OrderId = order.Id,
-                    FoodId = input.OrdersDetailsData[i].FoodId,
-                    Qty = input.OrdersDetailsData[i].Qty,
-                    CourierId = input.OrdersDetailsData[i].CourierId
-                };
-                order.OrderDetails.Add(orderdetails);
+
+
+
+                    var order = new Order
+                    {
+                        IdUser = user.Id,
+                        Code = input.Code
+
+
+                    };
+
+
+
+                    for (int i = 0; i < input.OrdersDetailsData.Count; i++)
+                    {
+                        var orderdetails = new OrderDetail
+                        {
+                            Location = input.OrdersDetailsData[i].Location,
+                            Tracker = input.OrdersDetailsData[i].Tracker,
+                            OrderId = order.Id,
+                            FoodId = input.OrdersDetailsData[i].FoodId,
+                            Qty = input.OrdersDetailsData[i].Qty,
+                            CourierId = input.OrdersDetailsData[i].CourierId
+                        };
+                        order.OrderDetails.Add(orderdetails);
+                    }
+
+
+
+                    context.Orders.Add(order);
+                    context.SaveChanges();
+                    await transaction.CommitAsync();
+
+                 
+                }
+                else if (enti != null && sttc.Status == true)
+
+
+                {
+
+
+                    var order = new Order
+                    {
+                        IdUser = user.Id,
+                        Code = input.Code
+
+
+                    };
+
+
+
+                    for (int i = 0; i < input.OrdersDetailsData.Count; i++)
+                    {
+                        var orderdetails = new OrderDetail
+                        {
+                            Location = input.OrdersDetailsData[i].Location,
+                            Tracker = input.OrdersDetailsData[i].Tracker,
+                            OrderId = order.Id,
+                            FoodId = input.OrdersDetailsData[i].FoodId,
+                            Qty = input.OrdersDetailsData[i].Qty,
+                            CourierId = input.OrdersDetailsData[i].CourierId
+                        };
+                        order.OrderDetails.Add(orderdetails);
+                    }
+
+
+
+                    context.Orders.Add(order);
+                    context.SaveChanges();
+                    await transaction.CommitAsync();
+
+
+
+
+                }
+                 else if (enti != null && sttc.Status == false)
+                {
+                    return new OrderData();
+                }
+
+
+
             }
-
-            var ret = context.Orders.Add(order);
-            await context.SaveChangesAsync();
-
-            return ret.Entity;
+            return new OrderData();
         }
-            
-      
 
-[Authorize(Roles = new[] { "MANAGER" })]
+            [Authorize(Roles = new[] { "MANAGER" })]
             public async Task<OrderDetail> UpdateOrderAsync(
-            OrdersUpdate input,
-            [Service] FoodDeliveriesContext context)
+                        OrdersUpdate input,
+                        [Service] FoodDeliveriesContext context)
             {
                 var orderDetail = context.OrderDetails.Where(o => o.Id == input.Id).FirstOrDefault();
                 if (orderDetail != null)
@@ -80,6 +151,7 @@ namespace OrderServices.GraphQL
                 return await Task.FromResult(orderDetail);
 
             }
+        
         
     
 
